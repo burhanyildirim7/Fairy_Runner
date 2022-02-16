@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class IyiCicekSenaryoScript : MonoBehaviour
+{
+    [SerializeField] private int _gerekliBuyuPuani;
+    [SerializeField] private int _oyuncuyaVerilecekPuan;
+
+    [SerializeField] private List<GameObject> _acilacakObjeler = new List<GameObject>();
+    [SerializeField] private List<GameObject> _kapanacakObjeler = new List<GameObject>();
+
+    //[SerializeField] private GameObject _canvas;
+
+    private int _levelNumber;
+
+    private PlayerController _playerController;
+
+    void Start()
+    {
+        _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+
+        _levelNumber = PlayerPrefs.GetInt("LevelNumber");
+
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            MoreMountains.NiceVibrations.MMVibrationManager.Haptic(MoreMountains.NiceVibrations.HapticTypes.MediumImpact);
+
+            if (PlayerController._toplamBuyuDegeri >= _gerekliBuyuPuani)
+            {
+                other.GetComponent<PlayerController>().FairyAttackAnimation();
+
+                PlayerController._toplamBuyuDegeri -= _gerekliBuyuPuani;
+
+                if (PlayerController._kotulukPuani > 0)
+                {
+                    PlayerController._kotulukPuani -= _oyuncuyaVerilecekPuan;
+                }
+                else
+                {
+                    PlayerController._iyilikPuani += _oyuncuyaVerilecekPuan;
+                }
+
+                _kapanacakObjeler[0].SetActive(false);
+
+                _acilacakObjeler[0].SetActive(true);
+                _acilacakObjeler[1].SetActive(true);
+                _acilacakObjeler[2].SetActive(true);
+
+                // _canvas.SetActive(false);
+
+                //Debug.Log("Iyi Insan");
+                //Debug.Log("Iyilik Puani = " + PlayerController._iyilikPuani.ToString());
+                //Debug.Log("Gerekli Buyu Puani = " + _gerekliBuyuPuani.ToString());
+            }
+            else
+            {
+                //Debug.Log("Buyu Puani Yetersiz!!!");
+            }
+
+        }
+    }
+}
